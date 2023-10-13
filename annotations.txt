@@ -1,0 +1,5 @@
+- Lib para getter e setters (LOMBOK - JAVA)
+- Lib para persistencia dos dados (Spring DATA JPA). Ele usa o conceito de ORM
+- Banco de dados em memória (H2 Database Engine)
+- Porta uqe o banco esta rodando: localhost:8080/h2-console
+- Biblioteca para criptografar a senha do usuario (bcrypt)
