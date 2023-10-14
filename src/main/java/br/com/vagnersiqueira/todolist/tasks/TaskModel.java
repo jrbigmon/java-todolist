@@ -1,11 +1,13 @@
 package br.com.vagnersiqueira.todolist.tasks;
 
+import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 import org.hibernate.annotations.CreationTimestamp;
 
 import br.com.vagnersiqueira.todolist.exceptions.ExceptionError;
+import br.com.vagnersiqueira.todolist.utils.Utils;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -49,8 +51,12 @@ public class TaskModel {
 
   @Transient
   public ExceptionError endAtIsValid() {
-    boolean isValid = endAt.isAfter(startAt);
+    boolean isValid = true;
     String message = "End at cannot be less then start at";
+
+    if (endAt != null) {
+      isValid = endAt.isAfter(startAt);
+    }
 
     return new ExceptionError(isValid, message);
   }
