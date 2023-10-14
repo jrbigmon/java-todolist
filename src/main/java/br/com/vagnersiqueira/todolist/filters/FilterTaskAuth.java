@@ -42,23 +42,36 @@ public class FilterTaskAuth extends OncePerRequestFilter {
     if (request.getServletPath().startsWith("/tasks/")) {
       String authorization = request.getHeader("Authorization");
 
+      if (authorization == null) {
+        response.sendError(401);
+        return;
+      }
+
       byte[] decoded = Base64.getDecoder().decode(authorization.substring("basic".length()).trim());
 
       String[] credentials = new String(decoded).split(":");
+
+      if (credentials.length < 2) {
+        response.sendError(401);
+        return;
+      }
 
       String username = credentials[0];
       String password = credentials[1];
 
       UUID userId = this.getUserId(username, password);
+
       if (userId == null) {
         response.sendError(401);
-      } else {
-        request.setAttribute("userId", userId);
-        filterChain.doFilter(request, response);
+        return;
       }
-    } else {
+
+      request.setAttribute("userId", userId);
       filterChain.doFilter(request, response);
+      return;
     }
+
+    filterChain.doFilter(request, response);
 
   }
 
