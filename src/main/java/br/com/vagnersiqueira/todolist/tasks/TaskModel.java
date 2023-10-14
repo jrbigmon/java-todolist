@@ -1,13 +1,11 @@
 package br.com.vagnersiqueira.todolist.tasks;
 
-import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 import org.hibernate.annotations.CreationTimestamp;
 
-import br.com.vagnersiqueira.todolist.exceptions.ExceptionError;
-import br.com.vagnersiqueira.todolist.utils.Utils;
+import br.com.vagnersiqueira.todolist.exceptions.HandleExceptionError;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -42,15 +40,17 @@ public class TaskModel {
   private LocalDateTime updatedAt;
 
   @Transient
-  public ExceptionError startAtIsValid() {
+  public void startAtIsValid() throws Exception {
     boolean isValid = LocalDateTime.now().isBefore(startAt);
     String message = "Start at cannot be less then current date";
 
-    return new ExceptionError(isValid, message);
+    var error = new HandleExceptionError(isValid, message);
+
+    error.triggerError();
   }
 
   @Transient
-  public ExceptionError endAtIsValid() {
+  public void endAtIsValid() throws Exception {
     boolean isValid = true;
     String message = "End at cannot be less then start at";
 
@@ -58,14 +58,18 @@ public class TaskModel {
       isValid = endAt.isAfter(startAt);
     }
 
-    return new ExceptionError(isValid, message);
+    var error = new HandleExceptionError(isValid, message);
+
+    error.triggerError();
   }
 
   @Transient
-  public ExceptionError titleIsValid() {
+  public void titleIsValid() throws Exception {
     boolean isValid = title.length() <= 50;
     String message = "Title cannot be greater then 50 chars";
 
-    return new ExceptionError(isValid, message);
+    var error = new HandleExceptionError(isValid, message);
+
+    error.triggerError();
   }
 }

@@ -1,10 +1,10 @@
 package br.com.vagnersiqueira.todolist.exceptions;
 
-public class ExceptionError {
-  private Boolean valid;
+public class HandleExceptionError {
+  private boolean valid;
   private String message;
 
-  public ExceptionError(boolean valid, String message) {
+  public HandleExceptionError(boolean valid, String message) {
     this.valid = valid;
 
     if (!valid) {
@@ -22,7 +22,9 @@ public class ExceptionError {
     return valid;
   }
 
-  public void triggerError() {
-    throw new Error(message);
+  public void triggerError() throws Exception {
+    if (!this.valid) {
+      throw new Exception(message);
+    }
   }
 }

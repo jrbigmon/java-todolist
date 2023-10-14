@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.vagnersiqueira.todolist.exceptions.ExceptionError;
 import br.com.vagnersiqueira.todolist.utils.Utils;
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -27,9 +26,10 @@ public class TaskController {
 
   @PostMapping("/")
   public ResponseEntity create(@RequestBody TaskModel task, HttpServletRequest request) {
-    String taskValid = this.validateTask(task);
-    if (taskValid != null) {
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(taskValid);
+    try {
+      this.validateTask(task);
+    } catch (Exception e) {
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
 
     UUID userId = (UUID) request.getAttribute("userId");
@@ -51,9 +51,10 @@ public class TaskController {
 
     Utils.copyNonNullProperties(task, taskModelInDb);
 
-    String taskValid = this.validateTask(taskModelInDb);
-    if (taskValid != null) {
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(taskValid);
+    try {
+      this.validateTask(taskModelInDb);
+    } catch (Exception e) {
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
 
     TaskModel taskUpdated = this.taskRepository.save(taskModelInDb);
@@ -71,11 +72,7 @@ public class TaskController {
   }
 
   private TaskModel verifyIfExists(UUID taskId, UUID userId) {
-    System.out.println(taskId);
-    System.out.println(userId);
     TaskModel task = this.taskRepository.findById(taskId).orElse(null);
-
-    System.out.println(task);
 
     if (task != null && !task.getUserId().equals(userId)) {
       return null;
@@ -84,24 +81,9 @@ public class TaskController {
     return task;
   }
 
-  private String validateTask(TaskModel task) {
-    ExceptionError startAtError = task.startAtIsValid();
-    ExceptionError endAtError = task.endAtIsValid();
-    ExceptionError titleError = task.titleIsValid();
-
-    if (!startAtError.getValid()) {
-      return startAtError.getMessage();
-    }
-
-    if (!endAtError.getValid()) {
-      return endAtError.getMessage();
-    }
-
-    if (!titleError.getValid()) {
-      return titleError.getMessage();
-    }
-
-    return null;
+  private void validateTask(TaskModel task) throws Exception {
+    task.startAtIsValid();
+    task.endAtIsValid();
+    task.titleIsValid();
   }
-
 }
