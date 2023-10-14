@@ -6,12 +6,7 @@ public class HandleExceptionError {
 
   public HandleExceptionError(boolean valid, String message) {
     this.valid = valid;
-
-    if (!valid) {
-      this.message = message;
-    } else {
-      this.message = "";
-    }
+    this.message = message;
   }
 
   public String getMessage() {
