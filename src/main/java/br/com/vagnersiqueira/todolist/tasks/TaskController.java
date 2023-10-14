@@ -27,7 +27,7 @@ public class TaskController {
   @PostMapping("/")
   public ResponseEntity create(@RequestBody TaskModel task, HttpServletRequest request) {
     try {
-      this.validateTask(task);
+      task.validateTask();
     } catch (Exception e) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
@@ -52,7 +52,7 @@ public class TaskController {
     Utils.copyNonNullProperties(task, taskModelInDb);
 
     try {
-      this.validateTask(taskModelInDb);
+      taskModelInDb.validateTask();
     } catch (Exception e) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
@@ -79,11 +79,5 @@ public class TaskController {
     }
 
     return task;
-  }
-
-  private void validateTask(TaskModel task) throws Exception {
-    task.startAtIsValid();
-    task.endAtIsValid();
-    task.titleIsValid();
   }
 }

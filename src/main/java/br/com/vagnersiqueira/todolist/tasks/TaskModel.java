@@ -41,8 +41,12 @@ public class TaskModel {
 
   @Transient
   public void startAtIsValid() throws Exception {
-    boolean isValid = LocalDateTime.now().isBefore(startAt);
+    boolean isValid = true;
     String message = "Start at cannot be less then current date";
+
+    if (startAt != null) {
+      isValid = LocalDateTime.now().isBefore(startAt);
+    }
 
     var error = new HandleExceptionError(isValid, message);
 
@@ -65,11 +69,22 @@ public class TaskModel {
 
   @Transient
   public void titleIsValid() throws Exception {
-    boolean isValid = title.length() <= 50;
+    boolean isValid = true;
     String message = "Title cannot be greater then 50 chars";
+
+    if (title != null) {
+      isValid = title.length() <= 50;
+    }
 
     var error = new HandleExceptionError(isValid, message);
 
     error.triggerError();
+  }
+
+  @Transient
+  public void validateTask() throws Exception {
+    startAtIsValid();
+    endAtIsValid();
+    titleIsValid();
   }
 }
